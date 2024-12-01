@@ -5,6 +5,8 @@ import nextstep.security.userdetils.UserDetails;
 import nextstep.security.userdetils.UserDetailsService;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
@@ -25,6 +27,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                     @Override
                     public String getPassword() {
                         return member.getPassword();
+                    }
+
+                    @Override
+                    public Set<String> getAuthorities() {
+                        return member.getRoles();
                     }
                 }).orElse(null);
     }
