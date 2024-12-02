@@ -3,6 +3,8 @@ package nextstep.app.ui;
 import nextstep.app.domain.Member;
 import nextstep.app.domain.MemberRepository;
 import nextstep.security.authentication.AuthenticationException;
+import nextstep.security.authorization.ForbiddenException;
+import nextstep.security.authorization.Secured;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,8 +28,20 @@ public class MemberController {
         return ResponseEntity.ok(members);
     }
 
+    @Secured("ADMIN")
+    @GetMapping("/search")
+    public ResponseEntity<List<Member>> search() {
+        List<Member> members = memberRepository.findAll();
+        return ResponseEntity.ok(members);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Void> handleAuthenticationException() {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<Void> handleForbiddenException() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 }
