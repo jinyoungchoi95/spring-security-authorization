@@ -1,12 +1,7 @@
 package nextstep.app.ui;
 
-import nextstep.security.authentication.BasicAuthenticationInterceptor;
-import nextstep.security.authorization.CheckAdminAuthorizationInterceptor;
-import nextstep.security.authorization.CheckAuthenticationInterceptor;
-import nextstep.security.authentication.FormLoginAuthenticationInterceptor;
-import nextstep.security.authentication.AuthenticationManager;
-import nextstep.security.authentication.DaoAuthenticationProvider;
-import nextstep.security.authentication.ProviderManager;
+import nextstep.security.authentication.*;
+import nextstep.security.authorization.AuthorizationFilter;
 import nextstep.security.context.HttpSessionSecurityContextRepository;
 import nextstep.security.context.SecurityContextHolderInterceptor;
 import nextstep.security.userdetils.UserDetailsService;
@@ -31,8 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SecurityContextHolderInterceptor(securityContextRepository()));
         registry.addInterceptor(new BasicAuthenticationInterceptor(authenticationManager()));
         registry.addInterceptor(new FormLoginAuthenticationInterceptor(authenticationManager(), securityContextRepository())).addPathPatterns("/login");
-        registry.addInterceptor(new CheckAuthenticationInterceptor()).addPathPatterns("/members");
-        registry.addInterceptor(new CheckAdminAuthorizationInterceptor()).addPathPatterns("/members");
+        registry.addInterceptor(new AuthorizationFilter());
     }
 
     @Bean

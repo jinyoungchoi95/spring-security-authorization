@@ -5,6 +5,8 @@ import nextstep.app.domain.MemberRepository;
 import nextstep.security.authentication.AuthenticationException;
 import nextstep.security.authorization.ForbiddenException;
 import nextstep.security.authorization.Secured;
+import nextstep.security.context.SecurityContextHolder;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +35,14 @@ public class MemberController {
     public ResponseEntity<List<Member>> search() {
         List<Member> members = memberRepository.findAll();
         return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/members/me")
+    public ResponseEntity<Member> me() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Member member = memberRepository.findByEmail(String.valueOf(principal))
+                .orElseThrow();
+        return ResponseEntity.ok(member);
     }
 
     @ExceptionHandler(AuthenticationException.class)
